@@ -1,0 +1,32 @@
+# This is the routing file that the nginx controller is going to use to 
+# determine how to route to our services
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+    # this host value can be whatever you want, as long as it matches
+    # the other configs and your os host file
+    - host: dotnetmicroservices.io
+      http:
+        paths:
+          - path: /api/platforms
+            pathType: Prefix
+            backend:
+              service:
+                # name of our cluster ip service
+                name: platforms-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/c/platforms
+            pathType: Prefix
+            backend:
+              service:
+                name: commands-clusterip-srv
+                port:
+                  number: 80
